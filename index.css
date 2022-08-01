@@ -1,0 +1,93 @@
+body {
+	color: white;
+	background: #212121;
+	font-family: 'Montserrat', sans-serif;
+}
+
+img {
+	margin-left: 7vmin;
+	height: 20vmin;
+	width: 20vmin;
+}
+
+hr {
+	width: 35vmin;
+}
+
+#game {
+	display: flex;
+	height: 52vmin;
+	width: 75vmin;
+	margin: 0 auto;
+}
+
+#usr {
+	height: 50vmin;
+	width: 35vmin;
+	padding: 1vmin;
+}
+
+#usr-score {
+	width: 35vmin;
+	color: white;
+	margin-left: 17vmin;
+}
+
+#usr img {
+	transform: rotate(90deg);
+}
+
+#usr-controls button {
+	height: 7.1vmin;
+	width: 7.1vmin;
+	border: solid white;
+	border-radius: 1vmin;
+	background-size: 6.5vmin;
+	margin-left: 3vmin;
+	margin-top: 3vmin;
+}
+
+#rock {
+	background: url('./rock.png');
+}
+
+#paper {
+	background: url('./paper.png');
+}
+
+#scissor {
+	background: url('./scissor.png');
+}
+
+#usr-controls button:active {
+	border: solid #212121;
+}
+
+#ai {
+	height: 50vmin;
+	width: 35vmin;
+	border-left: solid white .1vmin;
+	padding: 1vmin;
+}
+
+#ai-score {
+	width: 35vmin;
+	color: white;
+	margin-left: 17vmin;
+}
+
+#ai img {
+	transform: rotate(270deg);
+	margin-bottom: 4.5vmin;
+}
+
+#ai label {
+	margin-left: 7vmin;
+	margin-right: 1vmin;
+	font-size: 2.3vmin;
+}
+
+#ai input[type="radio"]:checked::after {
+	background-color: #212121;
+	size: 2.3vmin;
+}

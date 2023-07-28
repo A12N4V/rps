@@ -1,7 +1,10 @@
 body {
+	display: flex;
+	justify-content: center;
 	color: white;
-	background: #212121;
+	background: rgb(0 ,0 ,0);
 	font-family: 'Montserrat', sans-serif;
+	overflow-x: hidden;
 }
 
 img {
@@ -17,14 +20,17 @@ hr {
 #game {
 	display: flex;
 	height: 52vmin;
-	width: 75vmin;
+	width: 73.5vmin;
 	margin: 0 auto;
+	margin-top: 20vmin;
+	position: absolute;
+	border: solid .1vmin white;
 }
 
 #usr {
 	height: 50vmin;
 	width: 35vmin;
-	padding: 1vmin;
+	padding: 0.7vmin;
 }
 
 #usr-score {
@@ -35,28 +41,33 @@ hr {
 
 #usr img {
 	transform: rotate(90deg);
+	border-radius: 25vmin;
+	margin-top: 2vmin;
+	margin-bottom: 2.5vmin
 }
 
 #usr-controls button {
-	height: 7.1vmin;
-	width: 7.1vmin;
+	height: 7.5vmin;
+	width: 7.5vmin;
 	border: solid white;
 	border-radius: 1vmin;
-	background-size: 6.5vmin;
-	margin-left: 3vmin;
+	background-size: 7.5vmin;
+	background-repeat: no-repeat;
+	background-size: cover;
+	margin-left: 2.5vmin;
 	margin-top: 3vmin;
 }
 
-#rock {
-	background: url('./rock.png');
+#R {
+	background: url('./R.png');
 }
 
-#paper {
-	background: url('./paper.png');
+#P {
+	background: url('./P.png');
 }
 
-#scissor {
-	background: url('./scissor.png');
+#S {
+	background: url('./S.png');
 }
 
 #usr-controls button:active {
@@ -67,7 +78,7 @@ hr {
 	height: 50vmin;
 	width: 35vmin;
 	border-left: solid white .1vmin;
-	padding: 1vmin;
+	padding: 0.7vmin;
 }
 
 #ai-score {
@@ -78,13 +89,18 @@ hr {
 
 #ai img {
 	transform: rotate(270deg);
-	margin-bottom: 4.5vmin;
+	border-radius: 25vmin;
+	margin-top: 2vmin;
+	margin-left: 8vmin;
+	margin-bottom: 2.5vmin
 }
 
 #ai label {
 	margin-left: 7vmin;
 	margin-right: 1vmin;
 	font-size: 2.3vmin;
+	color: white;
+	font-weight: bolder;
 }
 
 #ai input[type="radio"]:checked::after {

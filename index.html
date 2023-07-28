@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<link rel="icon" type="image/x-icon" href="/rock.png">
+	<link rel="icon" type="image/x-icon" href="/R.png">
 	<title>RPS</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,24 +14,26 @@
 		<div id="usr">
 			<h3 id="usr-score">0</h3>
 			<hr />
-			<img src="rock.png" id="usr-choice">
+			<img src="./R.png" id="usr-choice">
+			<hr>
 			<div id="usr-controls">
-				<button id="rock"></button>
-				<button id="paper"></button>
-				<button id="scissor"></button>
+				<button id="R"></button>
+				<button id="P"></button>
+				<button id="S"></button>
 			</div>
 		</div>
 		<div id="ai">
 			<h3 id="ai-score">0</h3>
 			<hr />
-			<img src="rock.png" id="ai-choice">
+			<img src="./R.png" id="ai-choice">
+			<hr><br>
 			<label for="random-radio">Pseudo Random</label>
 			<input type="radio" name="radio" id="random-radio">
 			<label for="ai-radio">Activate AI</label>
-			<input type="radio" name="radio" id="ai-radio">
+			<input type="radio" name="radio" id="ai-radio"><br>
 		</div>
 	</div>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/synaptic/1.1.4/synaptic.js"></script>
+	<script src="https://unpkg.com/brain.js@2.0.0-beta.18/dist/browser.js"></script>
 	<script type="text/javascript" src="./index.js"></script>
 </body>
 </html>

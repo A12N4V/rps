@@ -4,8 +4,9 @@ var usrScore = 0;
 let usrScoreDisplay = document.getElementById('usr-score');
 let usrChoiceDisplay = document.getElementById('usr-choice');
 let usrChoiceControls = document.getElementById('usr-controls');
+var usrChoices =[];
+let gameCount = 0
 let usrChoice;
-var usrChoices = [];
 
 
 // ai variables
@@ -13,67 +14,107 @@ var aiScore = 0;
 let aiScoreDisplay = document.getElementById('ai-score');
 let aiChoiceDisplay = document.getElementById('ai-choice');
 let aiActivator = document.getElementById('ai-radio');
-aiActivator.disabled = true;
 document.getElementById('random-radio').checked = true;
 let aiChoice;
-var aiChoices = [];
+var aiChoices = []
+var patternLen = 10;
+var pattern = [];
 
-// neural network setup
-const { Layer, Network } = window.synaptic;
-var inputLayer = new Layer(3);
-var hiddenLayer = new Layer(4);
-var secondHiddenLayer = new Layer(4);
-var outputLayer = new Layer(1);
-inputLayer.project(hiddenLayer);
-hiddenLayer.project(outputLayer);
-var myNetwork = new Network({
-input: inputLayer,
-hidden: [hiddenLayer],
-output: outputLayer
-});
-var learningRate = .2;
+
+// preparing data to feed into the model
+function prepdata(){
+	if (pattern.length < 1) {
+		for (let index = 1; index <= patternLen; index++) {
+			pattern.push(Math.floor(Math.random() * 3) + 1)
+		}
+	}
+}
+function updatedata(){
+	if (gameCount !== 0) {
+        pattern.shift()
+        pattern.push(usrChoice)
+    }
+}
+
 
 // game mechanics
-
 usrChoiceControls.addEventListener('click', (e) => {
 	if (e.target.tagName == "BUTTON") {
-		usrChoice = e.target.id;
+
+		gameCount++;
+
+		usrChoice = converter(e.target.id);
 		usrChoices.push(usrChoice)
-		usrChoiceDisplay.src = usrChoice + '.png';
-		aiChoice = getAiChoice(usrChoice);
+		usrChoiceDisplay.src = converter(usrChoice) + '.png';
+
+		aiChoice = getAiChoice();
 		aiChoices.push(aiChoice)
-		aiChoiceDisplay.src = aiChoice + '.png';
+		aiChoiceDisplay.src = converter(aiChoice) + '.png';
 		calcScore(usrChoice, aiChoice);
+		updatedata()
 	}
 })
 
+function converter(input){
+	switch(input){
+		case 'R':
+			return 1; break
+		case 'P':
+			return 2; break
+		case 'S':
+			return 3; break
+		case 1:
+			return 'R'; break
+		case 2:
+			return 'P'; break
+		case 3:
+			return 'S'; break
+	}
+}
+
 function getAiChoice() {
+	prepdata()
 	if (aiActivator.checked) {
-		
-	} else {
-		let randomNum = Math.floor(Math.random() * 3);
-		let aiChoice;
-		switch (randomNum) {
-			case 0:
-				aiChoice = 'rock';
-				break;
+
+		// neural network setup
+		const net = new brain.recurrent.LSTMTimeStep()
+		net.train([pattern], { iterations: 100, log: true })
+		const humanWillChose = net.run(pattern)
+		const roundedHumanWillChoose = Math.round(humanWillChose)
+		let chosenByAI;
+		switch (roundedHumanWillChoose){
 			case 1:
-				aiChoice = 'paper';
-				break;
+				chosenByAI = 2; break
 			case 2:
-				aiChoice = 'scissor';
-				break;
+				chosenByAI = 3; break
+			case 3:
+				chosenByAI = 1; break
 		}
-		return aiChoice;
+		console.log(roundedHumanWillChoose)
+		console.log(chosenByAI)
+		return(chosenByAI)
+
+	} else {
+
+		const randomChoice = Math.floor(Math.random()*3 + 1)
+		return randomChoice;
+
 	};
 }
 
 function calcScore(usrChoice, aiChoice) {
-	if ((usrChoice == 'rock' && aiChoice == 'scissor') || (usrChoice == 'paper' && aiChoice == 'rock') || (usrChoice == 'scissor' && aiChoice == 'paper')) {
-		usrScore += 1;
-		usrScoreDisplay.innerHTML = usrScore;
-	} else if ((usrChoice == 'rock' && aiChoice == 'paper') || (usrChoice == 'paper' && aiChoice == 'scissor') || (usrChoice == 'scissor' && aiChoice == 'rock')) {
-		aiScore += 1; 
-		aiScoreDisplay.innerHTML = aiScore;
+	if ((usrChoice == 1 && aiChoice == 3) || 
+		(usrChoice == 2 && aiChoice == 1) || 
+		(usrChoice == 3 && aiChoice == 2)
+		) {
+			usrScore += 1;
+			usrScoreDisplay.innerHTML = usrScore;
+	} else if (
+		(usrChoice == 1 && aiChoice == 2) || 
+		(usrChoice == 2 && aiChoice == 3) || 
+		(usrChoice == 3 && aiChoice == 1)
+		) {
+			aiScore += 1; 
+			aiScoreDisplay.innerHTML = aiScore;
 	}
 }

@@ -1,109 +1,45 @@
 body {
-	display: flex;
+	display: grid;
 	justify-content: center;
 	color: white;
 	background: rgb(0 ,0 ,0);
-	font-family: 'Montserrat', sans-serif;
-	overflow-x: hidden;
-}
-
-img {
-	margin-left: 7vmin;
-	height: 20vmin;
-	width: 20vmin;
-}
-
-hr {
-	width: 35vmin;
-}
-
-#game {
-	display: flex;
-	height: 52vmin;
-	width: 73.5vmin;
+	font-family: 'Courier New', Courier, monospace;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	text-align: center;
+	height: 100%;
+	width: 100%;
 	margin: 0 auto;
-	margin-top: 20vmin;
-	position: absolute;
-	border: solid .1vmin white;
+	position: fixed;
 }
 
-#usr {
-	height: 50vmin;
-	width: 35vmin;
-	padding: 0.7vmin;
+#display{
+	display: flex;
+	padding: 10vmin;
 }
 
-#usr-score {
-	width: 35vmin;
-	color: white;
-	margin-left: 17vmin;
+#usr-choice, #ai-choice {
+    font-size: 30vmin;
 }
 
-#usr img {
+#ai-choice  {
+	transform: rotate(270deg);
+	margin-left: 5vmin;
+	color: rgb(255, 73, 73);
+}
+
+#usr-choice {
 	transform: rotate(90deg);
-	border-radius: 25vmin;
-	margin-top: 2vmin;
-	margin-bottom: 2.5vmin
 }
 
 #usr-controls button {
 	height: 7.5vmin;
 	width: 7.5vmin;
-	border: solid white;
-	border-radius: 1vmin;
-	background-size: 7.5vmin;
-	background-repeat: no-repeat;
-	background-size: cover;
-	margin-left: 2.5vmin;
-	margin-top: 3vmin;
+	border-radius: 7.5vmin;
+	font-size: 5vmin;
+    align-items: center;
 }
-
-#R {
-	background: url('./R.png');
-}
-
-#P {
-	background: url('./P.png');
-}
-
-#S {
-	background: url('./S.png');
-}
-
-#usr-controls button:active {
-	border: solid #212121;
-}
-
-#ai {
-	height: 50vmin;
-	width: 35vmin;
-	border-left: solid white .1vmin;
-	padding: 0.7vmin;
-}
-
-#ai-score {
-	width: 35vmin;
-	color: white;
-	margin-left: 17vmin;
-}
-
-#ai img {
-	transform: rotate(270deg);
-	border-radius: 25vmin;
-	margin-top: 2vmin;
-	margin-left: 8vmin;
-	margin-bottom: 2.5vmin
-}
-
-#ai label {
-	margin-left: 7vmin;
-	margin-right: 1vmin;
-	font-size: 2.3vmin;
-	color: white;
-	font-weight: bolder;
-}
-
-#ai input[type="radio"]:checked::after {
-	background-color: #212121;
-	size: 2.3vmin;
+#usr-controls button i {
+	z-index: -1;
 }

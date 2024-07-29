@@ -2,38 +2,29 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<link rel="icon" type="image/x-icon" href="/R.png">
+	<link rel="icon" type="image/x-icon" class="fas fa-hand-scissor">
 	<title>RPS</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap" rel="stylesheet"> 
 	<link rel="stylesheet" type="text/css" href="./index.css">
 </head>
 <body>
 	<div id="game">
-		<div id="usr">
-			<h3 id="usr-score">0</h3>
-			<hr />
-			<img src="./R.png" id="usr-choice">
-			<hr>
-			<div id="usr-controls">
-				<button id="R"></button>
-				<button id="P"></button>
-				<button id="S"></button>
-			</div>
+		<h1 id="score">0</h1>
+		<div id="display">
+			<i id='usr-choice' class="fas fa-hand-rock"></i>
+			<i id='ai-choice' class="fas fa-hand-rock"></i>
 		</div>
-		<div id="ai">
-			<h3 id="ai-score">0</h3>
-			<hr />
-			<img src="./R.png" id="ai-choice">
-			<hr><br>
-			<label for="random-radio">Random</label>
-			<input type="radio" name="radio" id="random-radio">
-			<label for="ai-radio">Activate AI</label>
-			<input type="radio" name="radio" id="ai-radio"><br>
+		<div id="usr-controls">
+			<button id="r" onclick="manageInp('r')"><i class="fas fa-hand-rock"></i></button>
+			<button id="p" onclick="manageInp('p')"><i class="fas fa-hand-paper"></i></button>
+			<button id="s" onclick="manageInp('s')"><i class="fas fa-hand-scissors"></i></button>
 		</div>
 	</div>
 	<script src="https://unpkg.com/brain.js@2.0.0-beta.18/dist/browser.js"></script>
 	<script type="text/javascript" src="./index.js"></script>
 </body>
 </html>
+

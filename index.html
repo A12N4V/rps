@@ -7,24 +7,82 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap" rel="stylesheet"> 
-	<link rel="stylesheet" type="text/css" href="./index.css">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
-	<div id="game">
-		<h1 id="score">0</h1>
-		<div id="display">
-			<i id='usr-choice' class="fas fa-hand-rock"></i>
-			<i id='ai-choice' class="fas fa-hand-rock"></i>
-		</div>
-		<div id="usr-controls">
-			<button id="r" onclick="manageInp('r')"><i class="fas fa-hand-rock"></i></button>
-			<button id="p" onclick="manageInp('p')"><i class="fas fa-hand-paper"></i></button>
-			<button id="s" onclick="manageInp('s')"><i class="fas fa-hand-scissors"></i></button>
+	<!-- Game Window -->
+	<div class="game-window">
+		<!-- Theme toggle at top right -->
+		<button id="theme-toggle" class="theme-toggle-top" aria-label="Toggle theme">
+			<i class="fas fa-moon"></i>
+		</button>
+
+		<!-- Main game -->
+		<div id="game">
+			<h1 id="score">0</h1>
+			<div id="display">
+				<!-- Matrix Background behind display area -->
+				<div class="matrix-background">
+					<canvas id="matrix-canvas"></canvas>
+				</div>
+
+				<div class="display-container user-container">
+					<img id='usr-choice' class="hand-image user-hand clickable" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Rock-paper-scissors_%28rock%29.png" alt="User choice">
+				</div>
+
+				<div class="display-container ai-container">
+					<i id='ai-choice' class="fas fa-hand-rock fa-icon ai-icon"></i>
+				</div>
+			</div>
+			<div id="usr-controls">
+				<button id="play-button">Play</button>
+				<button id="brain-toggle" class="brain-beside-play" aria-label="View neural network">
+					<i class="fas fa-brain"></i>
+				</button>
+			</div>
+
+			<!-- Match History Display Below Play Button -->
+			<div class="match-history-section" id="match-history-view">
+				<h3 class="history-title">Match History</h3>
+				<ul class="history-list-inline"></ul>
+			</div>
+
+			<!-- Neural Network Display -->
+			<div class="network-view-section" id="network-view" style="display: none;">
+				<h3 class="history-title">Neural Network</h3>
+				<div id="network-container-inline"></div>
+			</div>
 		</div>
 	</div>
+
+	<!-- History Modal -->
+	<div id="history-modal" class="history-modal" style="display: none;">
+		<div class="history-content">
+			<div class="history-header">
+				<h2>Match History</h2>
+				<button id="close-history" aria-label="Close history">&times;</button>
+			</div>
+			<div class="history-body">
+				<ul class="history-list"></ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- Network Visualization Modal -->
+	<div id="network-modal" class="network-modal" style="display: none;">
+		<div class="network-content">
+			<div class="network-header">
+				<h2>LSTM Neural Network</h2>
+				<button id="close-network" aria-label="Close network">&times;</button>
+			</div>
+			<div id="network-container"></div>
+		</div>
+	</div>
+
 	<script src="https://unpkg.com/brain.js@2.0.0-beta.18/dist/browser.js"></script>
-	<script type="text/javascript" src="./index.js"></script>
+	<script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+	<script type="text/javascript" src="./main.js"></script>
 </body>
 </html>
 

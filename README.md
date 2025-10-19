@@ -1,5 +1,10 @@
 # 🎮 Rock Paper Scissors - LSTM Neural Network Demonstration
 
+<div align="center">
+  <img src="game.png" alt="RPS Game" width="45%" style="display: inline-block; margin-right: 2%;">
+  <img src="game1.png" alt="RPS Game Neural Network" width="45%" style="display: inline-block;">
+</div>
+
 An interactive Rock Paper Scissors game that demonstrates the power of **LSTM (Long Short-Term Memory)** neural networks in pattern recognition and prediction. Challenge an AI opponent that learns and adapts to your playing patterns in real-time.
 
 ![Rock Paper Scissors Game](https://img.shields.io/badge/Game-Rock%20Paper%20Scissors-brightgreen)

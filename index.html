@@ -11,18 +11,14 @@
 	<link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
-	<!-- Game Window -->
 	<div class="game-window">
-		<!-- Theme toggle at top right -->
 		<button id="theme-toggle" class="theme-toggle-top" aria-label="Toggle theme">
 			<i class="fas fa-moon"></i>
 		</button>
 
-		<!-- Main game -->
 		<div id="game">
 			<h1 id="score">0</h1>
 			<div id="display">
-				<!-- Matrix Background behind display area -->
 				<div class="matrix-background">
 					<canvas id="matrix-canvas"></canvas>
 				</div>
@@ -42,13 +38,11 @@
 				</button>
 			</div>
 
-			<!-- Match History Display Below Play Button -->
 			<div class="match-history-section" id="match-history-view">
 				<h3 class="history-title">Match History</h3>
 				<ul class="history-list-inline"></ul>
 			</div>
 
-			<!-- Neural Network Display -->
 			<div class="network-view-section" id="network-view" style="display: none;">
 				<h3 class="history-title">Neural Network</h3>
 				<div id="network-container-inline"></div>
@@ -56,7 +50,6 @@
 		</div>
 	</div>
 
-	<!-- History Modal -->
 	<div id="history-modal" class="history-modal" style="display: none;">
 		<div class="history-content">
 			<div class="history-header">
@@ -69,7 +62,6 @@
 		</div>
 	</div>
 
-	<!-- Network Visualization Modal -->
 	<div id="network-modal" class="network-modal" style="display: none;">
 		<div class="network-content">
 			<div class="network-header">

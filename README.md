@@ -1,973 +1,495 @@
-# ✊✋✌️ Rock · Paper · Scissors — An AI Concepts Laboratory
+# RPS
 
-<div align="center">
-
-```
-    ╔═══════════════════════════════════════════════════════════╗
-    ║                                                           ║
-    ║    ✊  →  beats  →  ✌️   →  beats  →  ✋  →  beats  →  ✊ ║
-    ║                                                           ║
-    ║      Three moves. Infinite AI to learn from it.          ║
-    ║                                                           ║
-    ╚═══════════════════════════════════════════════════════════╝
-```
-
-![Game](https://img.shields.io/badge/Game-Rock%20Paper%20Scissors-brightgreen?style=for-the-badge&logo=gamepad)
-![Neural Network](https://img.shields.io/badge/AI-LSTM%20%7C%20RL%20%7C%20Game%20Theory-blue?style=for-the-badge&logo=brain)
-![Language](https://img.shields.io/badge/Stack-JavaScript%20%7C%20Brain.js-yellow?style=for-the-badge&logo=javascript)
-![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)
-
-**A living laboratory where the simplest 3-move game becomes a window into the full breadth of AI, mathematics, and cognitive science.**
-
-</div>
+![Stack](https://img.shields.io/badge/Stack-JavaScript_%7C_Brain.js-black?style=flat-square)
+![AI](https://img.shields.io/badge/AI-LSTM_%7C_RL_%7C_Game_Theory-4A90D9?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-222?style=flat-square)
 
 ---
 
-## 🎯 Abstract
+## Abstract
 
-Rock Paper Scissors (RPS) occupies a paradoxical position in game theory: it is trivially simple to describe yet provably impossible to *solve* with a pure deterministic strategy. This makes it an ideal petri dish for AI concepts — every technique that attempts to *beat* a human opponent must grapple with uncertainty, temporal patterns, psychological bias, and adversarial dynamics.
-
-This project uses an interactive RPS game as a **demonstrable substrate** for teaching and visualizing AI concepts that span:
-
-- **Sequence modeling** (LSTM, GRU, Markov Chains)
-- **Reinforcement learning** (Q-Learning, Multi-Armed Bandits)
-- **Game theory** (Nash Equilibria, Minimax, Zero-Sum Games)
-- **Probabilistic reasoning** (Bayesian inference, Thompson Sampling)
-- **Cognitive science** (Gambler's Fallacy, Recency Bias)
-- **Mathematical theorems** (Law of Large Numbers, Von Neumann's Minimax Theorem)
-
-The current implementation deploys an **LSTM neural network** (via Brain.js) as the AI opponent. This README serves as a complete map of every AI concept that RPS can demonstrate — a curriculum unto itself.
+Rock Paper Scissors occupies a paradoxical position in formal game theory: trivially simple to describe, yet provably unsolvable by any pure deterministic strategy. This property makes it a minimal but complete substrate for demonstrating the full breadth of modern AI -- every technique that attempts to beat a human opponent must grapple with uncertainty, temporal dependence, adversarial dynamics, and psychological bias. This project uses an interactive RPS game as a living laboratory for those concepts, currently implementing an LSTM neural network as the AI opponent, with a map of 20 additional AI frameworks the game naturally demonstrates.
 
 ---
 
-## 📐 The Game as a Mathematical Object
+## The Game as a Mathematical Object
 
-Before exploring AI, it helps to see RPS with mathematical clarity.
+The payoff matrix $A$ for a two-player zero-sum formulation:
 
-### The Payoff Matrix
+$$A = \begin{pmatrix} 0 & -1 & +1 \\ +1 & 0 & -1 \\ -1 & +1 & 0 \end{pmatrix}$$
 
-```
-                    ┌──────────────────────────────────────┐
-                    │           AI's Move                  │
-                    │   Rock (R)   Paper (P)  Scissors (S) │
-         ┌──────────┼─────────────┬───────────┬────────────┤
-Human's  │  Rock    │    0 , 0    │  -1 , +1  │  +1 , -1  │
-Move     │  Paper   │  +1 , -1   │    0 , 0  │  -1 , +1  │
-         │ Scissors │  -1 , +1   │  +1 , -1  │    0 , 0  │
-         └──────────┴─────────────┴───────────┴────────────┘
-                    (Human payoff, AI payoff)
-```
-
-**Key property:** For every entry, payoffs sum to zero. This is the canonical **zero-sum game**.
-
-### The Cyclic Dominance Graph
-
-```
-         ✊ Rock
-        ↗       ↘
-    beats         loses to
-      ↑               ↓
-    ✌️ Scissors ← ✋ Paper
-         beats
-```
-
-This three-node directed cycle has no "dominant strategy" — no single move beats all others. This is the mathematical reason why pure strategies fail and probabilistic/adaptive strategies are necessary.
+where rows are the human's moves $\{R, P, S\}$ and columns are the AI's moves. Every entry pair sums to zero, confirming the zero-sum property. The cyclic dominance structure means no row strictly dominates another, so no pure strategy can be optimal.
 
 ---
 
-## 🗂️ Master Index of AI Concepts Demonstrable in RPS
+## Concept Index
 
-| # | Concept | Category | Difficulty |
-|---|---------|----------|------------|
-| 1 | [LSTM Neural Networks](#1--lstm-long-short-term-memory) | Deep Learning | ⭐⭐⭐ |
-| 2 | [Markov Chains](#2--markov-chains) | Probabilistic | ⭐⭐ |
-| 3 | [Nash Equilibrium](#3--nash-equilibrium--game-theory) | Game Theory | ⭐⭐ |
-| 4 | [Q-Learning](#4--q-learning--reinforcement-learning) | RL | ⭐⭐⭐ |
-| 5 | [Multi-Armed Bandits](#5--multi-armed-bandits) | RL | ⭐⭐ |
-| 6 | [Bayesian Inference](#6--bayesian-inference) | Probabilistic | ⭐⭐⭐ |
-| 7 | [Minimax Algorithm](#7--minimax-algorithm) | Game Theory | ⭐⭐ |
-| 8 | [Frequency Analysis](#8--frequency-analysis--transition-matrices) | Statistics | ⭐ |
-| 9 | [Gambler's Fallacy & Cognitive Bias](#9--cognitive-biases--human-psychology) | Psychology | ⭐⭐ |
-| 10 | [Von Neumann's Minimax Theorem](#10--von-neumanns-minimax-theorem) | Math | ⭐⭐⭐ |
-| 11 | [Law of Large Numbers](#11--law-of-large-numbers--central-limit-theorem) | Statistics | ⭐ |
-| 12 | [Hidden Markov Models](#12--hidden-markov-models-hmm) | Probabilistic | ⭐⭐⭐ |
-| 13 | [Monte Carlo Methods](#13--monte-carlo-methods) | Simulation | ⭐⭐ |
-| 14 | [Entropy & Information Theory](#14--entropy--information-theory) | Math | ⭐⭐ |
-| 15 | [Ensemble Methods](#15--ensemble-methods) | ML | ⭐⭐ |
-| 16 | [Thompson Sampling](#16--thompson-sampling) | RL / Bayesian | ⭐⭐⭐ |
-| 17 | [Transformer Attention](#17--transformer--attention-mechanisms) | Deep Learning | ⭐⭐⭐⭐ |
-| 18 | [Folk Theorem (Repeated Games)](#18--folk-theorem--repeated-games) | Game Theory | ⭐⭐⭐ |
-| 19 | [GRU Networks](#19--gru-gated-recurrent-unit) | Deep Learning | ⭐⭐⭐ |
-| 20 | [Policy Gradient](#20--policy-gradient-methods) | RL | ⭐⭐⭐⭐ |
-
----
-
-## 🧠 Deep Dives
+| # | Concept | Category |
+|---|---------|----------|
+| 1 | [LSTM](#1-lstm) | Deep Learning |
+| 2 | [GRU](#2-gru) | Deep Learning |
+| 3 | [Transformer Attention](#3-transformer-attention) | Deep Learning |
+| 4 | [Markov Chains](#4-markov-chains) | Probabilistic |
+| 5 | [Hidden Markov Models](#5-hidden-markov-models) | Probabilistic |
+| 6 | [Bayesian Inference](#6-bayesian-inference) | Probabilistic |
+| 7 | [Thompson Sampling](#7-thompson-sampling) | Probabilistic / RL |
+| 8 | [Nash Equilibrium](#8-nash-equilibrium) | Game Theory |
+| 9 | [Minimax Algorithm](#9-minimax-algorithm) | Game Theory |
+| 10 | [Von Neumann Minimax Theorem](#10-von-neumann-minimax-theorem) | Game Theory |
+| 11 | [Folk Theorem](#11-folk-theorem) | Game Theory |
+| 12 | [Q-Learning](#12-q-learning) | Reinforcement Learning |
+| 13 | [Policy Gradient](#13-policy-gradient) | Reinforcement Learning |
+| 14 | [Multi-Armed Bandits](#14-multi-armed-bandits) | Reinforcement Learning |
+| 15 | [Frequency Analysis](#15-frequency-analysis) | Statistics |
+| 16 | [Entropy and Information Theory](#16-entropy-and-information-theory) | Statistics |
+| 17 | [Law of Large Numbers / CLT](#17-law-of-large-numbers-and-clt) | Statistics |
+| 18 | [Monte Carlo Methods](#18-monte-carlo-methods) | Simulation |
+| 19 | [Ensemble Methods](#19-ensemble-methods) | ML Systems |
+| 20 | [Cognitive Biases](#20-cognitive-biases) | Psychology |
 
 ---
 
-### 1 · LSTM (Long Short-Term Memory)
+## 1. LSTM
 
-> **Current implementation** — the live AI opponent in this game.
+**Current implementation.** Long Short-Term Memory networks learn dependencies in sequences. The input sequence is the player's last $T$ moves encoded as integers $x_t \in \{1, 2, 3\}$.
 
-LSTMs are recurrent neural networks designed to learn **long-range dependencies in sequences**. In RPS, the sequence is your history of moves. The LSTM attempts to detect patterns — e.g., "after losing twice the player often switches to Rock."
+$$f_t = \sigma(W_f [h_{t-1}, x_t] + b_f)$$
+$$i_t = \sigma(W_i [h_{t-1}, x_t] + b_i)$$
+$$\tilde{C}_t = \tanh(W_C [h_{t-1}, x_t] + b_C)$$
+$$C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t$$
+$$o_t = \sigma(W_o [h_{t-1}, x_t] + b_o)$$
+$$h_t = o_t \odot \tanh(C_t)$$
 
-#### Architecture Diagram
-
-```
-              ┌──────────────────────────────────────────────────────┐
-              │                   LSTM Unit                          │
-              │                                                      │
-  x_t ───────┼──┬──────────────────────────────────────────────┐    │
-  (move)      │  │  ┌──────────┐   ┌──────────┐   ┌─────────┐  │    │
-              │  └─►│ Forget   │   │  Input   │   │ Output  │  │    │
-  h_{t-1} ───┼──┬──►│  Gate   │   │   Gate   │   │  Gate   │  │    │
-  (prev out)  │  │  │   f_t   │   │   i_t    │   │   o_t   │  │    │
-              │  │  └────┬─────┘   └────┬─────┘   └────┬────┘  │    │
-              │  │       │ σ            │ σ·tanh        │ σ     │    │
-              │  │       ▼             ▼               │       │    │
-  C_{t-1} ───┼──┼──►  [×]──────────►[+]──────C_t      │       │    │
-  (cell)      │  │    discard      add new    │         │       │    │
-              │  │                            ▼         │       │    │
-              │  │                         tanh(C_t)   │       │    │
-              │  │                            │◄────────┘       │    │
-              │  │                            ▼                 │    │
-              │  └────────────────────────►  [×]                │    │
-              │                              │                  │    │
-              │                           h_t (output)         │    │
-              └──────────────────────────────────────────────────┘
-                                              │
-                                         ŷ_t (predicted next move)
-```
-
-#### Equations
-
-```
-f_t = σ(W_f · [h_{t-1}, x_t] + b_f)           ← Forget Gate
-i_t = σ(W_i · [h_{t-1}, x_t] + b_i)           ← Input Gate
-C̃_t = tanh(W_C · [h_{t-1}, x_t] + b_C)        ← Candidate Values
-C_t = f_t ⊙ C_{t-1} + i_t ⊙ C̃_t              ← Cell State Update
-o_t = σ(W_o · [h_{t-1}, x_t] + b_o)           ← Output Gate
-h_t = o_t ⊙ tanh(C_t)                          ← Hidden State Output
+```mermaid
+flowchart LR
+    xt["x_t"] --> fg["Forget Gate\nσ"]
+    xt --> ig["Input Gate\nσ"]
+    xt --> cg["Candidate\ntanh"]
+    xt --> og["Output Gate\nσ"]
+    ht1["h_(t-1)"] --> fg
+    ht1 --> ig
+    ht1 --> cg
+    ht1 --> og
+    Ct1["C_(t-1)"] --> mul1["x"]
+    fg --> mul1
+    ig --> mul2["x"]
+    cg --> mul2
+    mul1 --> add["+ C_t"]
+    mul2 --> add
+    add --> tanh2["tanh"]
+    og --> mul3["x"]
+    tanh2 --> mul3
+    mul3 --> ht["h_t / y_t"]
+    add --> Ct["C_t"]
 ```
 
-**Why it works in RPS:** If you habitually play `R → P → S → R → P → S`, the LSTM's cell state learns this periodicity and the forget gate retains this cycle information across many timesteps.
+The AI plays the counter-move to the predicted $\hat{y}_t$: predicted Rock yields Paper, Paper yields Scissors, Scissors yields Rock.
 
 ---
 
-### 2 · Markov Chains
+## 2. GRU
 
-A **Markov Chain** models a sequence where the next state depends only on the current state (the "Markov property").
+The Gated Recurrent Unit removes the separate cell state, reducing parameters while retaining sequence modeling capacity.
 
-#### State Transition Diagram
+$$z_t = \sigma(W_z [h_{t-1}, x_t])$$
+$$r_t = \sigma(W_r [h_{t-1}, x_t])$$
+$$\tilde{h}_t = \tanh(W [r_t \odot h_{t-1}, x_t])$$
+$$h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \tilde{h}_t$$
 
-```
-              p(P|R)=0.4
-         ┌─────────────────┐
-         │                 ▼
-    ┌────┴────┐         ┌───────┐
-    │  Rock   │◄───────►│ Paper │
-    └────┬────┘ p(R|P)  └───┬───┘
-         │      =0.2        │
-         │ p(S|R)=0.4       │ p(S|P)=0.5
-         ▼                  ▼
-    ┌──────────┐←──────────►│
-    │ Scissors │  p(P|S)    │
-    └──────────┘  =0.3      │
-         ▲                  │
-         └──────────────────┘
-              p(R|S)=0.2
-```
-
-#### Transition Matrix
-
-```
-         From:   Rock   Paper  Scissors
-         Rock   [0.2    0.4    0.4  ]
-    To:  Paper  [0.4    0.2    0.3  ]
-         Scissors[0.4   0.5    0.2  ]
+```mermaid
+flowchart LR
+    xt["x_t"] --> zg["Update Gate z_t\nσ"]
+    xt --> rg["Reset Gate r_t\nσ"]
+    xt --> cand["Candidate h~\ntanh"]
+    ht1["h_(t-1)"] --> zg
+    ht1 --> rg
+    rg --> mulr["x"]
+    ht1 --> mulr
+    mulr --> cand
+    zg --> inv["1 - z_t"]
+    inv --> mulh["x h_(t-1)"]
+    ht1 --> mulh
+    zg --> mulc["x h~"]
+    cand --> mulc
+    mulh --> sum["+ h_t"]
+    mulc --> sum
 ```
 
-**RPS application:** Track the empirical transition matrix from your opponent's history. If `P(Paper | Rock) = 0.7` from their history, play Scissors when they just played Rock.
-
-**Higher-order Markov Models** extend this to `P(next | last n moves)` — the `n=10` LSTM window in this game is a learned approximation of a high-order Markov model.
+Relative to LSTM: GRU has no $C_t$, two gates instead of three, and trains approximately 25% faster on short sequences (T <= 20).
 
 ---
 
-### 3 · Nash Equilibrium & Game Theory
+## 3. Transformer Attention
 
-> **The most fundamental theorem in RPS.**
+Attention replaces recurrence entirely. Each position in the move history attends to all others, producing a context vector via scaled dot-product attention.
 
-A **Nash Equilibrium** is a strategy profile where no player can unilaterally improve their expected payoff by switching strategies.
+$$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V$$
 
-#### The Unique Nash Equilibrium of RPS
+where $Q = x W_Q$, $K = x W_K$, $V = x W_V$ are learned linear projections of the move sequence $x$.
 
-```
-       Play each move with probability 1/3
-
-       P(Rock) = P(Paper) = P(Scissors) = 1/3
-
-       Expected payoff = 0  (the game is "fair")
-```
-
-**Proof sketch:** If you play Rock with probability > 1/3, your opponent can exploit you by always playing Paper. The only unexploitable strategy is perfect randomization.
-
-#### Deviation Payoff Analysis
-
-```
-    Opponent plays 1/3, 1/3, 1/3:
-
-    Your EV (Rock)     = 1/3·(0) + 1/3·(-1) + 1/3·(1) = 0
-    Your EV (Paper)    = 1/3·(1) + 1/3·(0)  + 1/3·(-1) = 0
-    Your EV (Scissors) = 1/3·(-1) + 1/3·(1) + 1/3·(0) = 0
-
-    → No deviation is profitable. This IS the Nash Equilibrium.
+```mermaid
+flowchart TD
+    seq["Move sequence\n[R, P, R, R, S, P, R, P, S]"] --> emb["Token + Position Embedding"]
+    emb --> Q["Q = xW_Q"]
+    emb --> K["K = xW_K"]
+    emb --> V["V = xW_V"]
+    Q --> attn["softmax(QK^T / sqrt(d_k))"]
+    K --> attn
+    attn --> weight["Attention Weights"]
+    weight --> ctx["x V  ->  Context Vector"]
+    V --> ctx
+    ctx --> ff["Feed-Forward Layer"]
+    ff --> pred["Predicted next move"]
 ```
 
-**The paradox for AI:** Any deterministic AI strategy can be beaten. The only *game-theoretically optimal* AI is a random number generator. Yet humans are NOT random — they exhibit biases the AI can exploit. This tension between optimality and exploitation is the heart of the project.
+Multi-head attention runs $h$ parallel attention functions, then concatenates: $\text{MultiHead}(Q,K,V) = \text{Concat}(\text{head}_1,\ldots,\text{head}_h)W^O$.
 
 ---
 
-### 4 · Q-Learning & Reinforcement Learning
+## 4. Markov Chains
 
-**Q-Learning** learns a value function `Q(state, action)` — the expected cumulative reward of taking action `a` in state `s`.
+A first-order Markov chain models the move sequence under the assumption $P(x_t \mid x_{t-1}, \ldots, x_1) = P(x_t \mid x_{t-1})$. The empirical transition matrix $\hat{T}$ is:
 
-#### State-Action Space in RPS
+$$\hat{T}_{ij} = \frac{\text{count}(x_{t-1} = i,\; x_t = j)}{\text{count}(x_{t-1} = i)}$$
 
-```
-    State:  Last N moves of opponent (e.g., [R, R, P, S, R])
-    Actions: {Rock, Paper, Scissors}
-    Reward: +1 (win), 0 (draw), -1 (loss)
+An $n$-th order extension conditions on the last $n$ moves, approximating a high-order Markov model and converging toward the LSTM's learned representation as $n$ increases.
 
-    Q-Table Update:
-    Q(s, a) ← Q(s, a) + α · [r + γ · max_a' Q(s', a') - Q(s, a)]
-                              └──── Bellman Equation ──────┘
-
-    where:
-      α = learning rate (e.g., 0.1)
-      γ = discount factor (e.g., 0.9)
-      r = immediate reward
-      s' = next state
-```
-
-#### RL Loop in RPS
-
-```
-    ┌──────────────────────────────────────────────────────────┐
-    │                                                          │
-    │  ┌─────────┐   state s    ┌──────────┐   action a      │
-    │  │         │─────────────►│  Agent   │────────────────► │
-    │  │ Environ │   (history)  │ (Q-table │  (AI move)      │
-    │  │  -ment  │◄─────────────│  or NN)  │                 │
-    │  │  (game) │  reward r    └──────────┘                 │
-    │  └─────────┘  next state s'                             │
-    │                                                          │
-    └──────────────────────────────────────────────────────────┘
-```
-
-**Key insight:** After thousands of games, the Q-values encode the exploitation of specific human behavioral patterns as learned policy.
-
----
-
-### 5 · Multi-Armed Bandits
-
-The **Multi-Armed Bandit** problem asks: given K options (arms) with unknown reward distributions, how do you maximize total reward over time by balancing **exploration** (trying new options) and **exploitation** (using the best known option)?
-
-#### RPS as a Bandit Problem
-
-```
-    Arms:       [Rock,      Paper,     Scissors]
-    Rewards:    estimated win rates for each move
-
-    ┌──────────────────────────────────────────────────┐
-    │  UCB1 Strategy:                                  │
-    │                                                  │
-    │  score(a) = Q̂(a) + C · √(ln t / n(a))          │
-    │                     └── exploration bonus ──┘   │
-    │                                                  │
-    │  where:                                          │
-    │    Q̂(a) = empirical win rate of move a          │
-    │    t    = total rounds played                    │
-    │    n(a) = times move a was chosen                │
-    │    C    = exploration constant                   │
-    └──────────────────────────────────────────────────┘
-```
-
-**Why it's limited:** Standard bandits ignore temporal structure — they treat every round as independent. This is why sequence models (LSTM, Markov) outperform bandits in RPS when the opponent has patterns.
-
----
-
-### 6 · Bayesian Inference
-
-**Bayesian inference** updates beliefs (prior → posterior) as evidence accumulates.
-
-#### Dirichlet-Multinomial Model for RPS
-
-```
-    Prior:  Dir(α_R, α_P, α_S)  — initial belief about opponent's tendencies
-             e.g., Dir(1, 1, 1) = "no idea" (uniform)
-
-    Likelihood: each observed move updates the Dirichlet counts
-
-    After observing [R, R, P, S, R]:
-      α_R += 3  →  α_R = 4
-      α_P += 1  →  α_P = 2
-      α_S += 1  →  α_S = 2
-
-    Posterior: Dir(4, 2, 2)
-
-    Expected move probabilities:
-      P(Rock)     = 4/8 = 0.50
-      P(Paper)    = 2/8 = 0.25
-      P(Scissors) = 2/8 = 0.25
-
-    → AI plays Paper (beats Rock most likely)
-```
-
-#### Belief Update Visualization
-
-```
-    Round 0:     ████████████████████  (equal 33% each)
-                 R          P          S
-
-    Round 5:     ████████████████████████████  R (dominant)
-                 █████████████  P
-                 █████████████  S
-
-    Round 10:    → AI confidently plays Paper
+```mermaid
+stateDiagram-v2
+    direction LR
+    Rock --> Rock : p(R|R)
+    Rock --> Paper : p(P|R)
+    Rock --> Scissors : p(S|R)
+    Paper --> Rock : p(R|P)
+    Paper --> Paper : p(P|P)
+    Paper --> Scissors : p(S|P)
+    Scissors --> Rock : p(R|S)
+    Scissors --> Paper : p(P|S)
+    Scissors --> Scissors : p(S|S)
 ```
 
 ---
 
-### 7 · Minimax Algorithm
+## 5. Hidden Markov Models
 
-**Minimax** is the adversarial search algorithm: the AI maximizes its outcome assuming the human will minimize AI's gain (and vice versa).
+An HMM introduces latent states $z_t$ (unobserved player "strategy modes") that generate observed moves $x_t$.
 
-#### Game Tree (2-level lookahead)
+$$P(x_{1:T}, z_{1:T}) = P(z_1) \prod_{t=2}^{T} P(z_t \mid z_{t-1}) \prod_{t=1}^{T} P(x_t \mid z_t)$$
 
-```
-                           ┌────────────┐
-                           │  AI's Turn │ (MAX node)
-                           └─────┬──────┘
-                    ┌────────────┼────────────┐
-                    ▼            ▼            ▼
-                  AI:R         AI:P         AI:S
-              ┌────┴────┐  ┌────┴────┐  ┌────┴────┐
-              │ MIN node│  │ MIN node│  │ MIN node│
-              └────┬────┘  └────┬────┘  └────┬────┘
-           H:R H:P H:S    H:R H:P H:S   H:R H:P H:S
-           0  -1  +1      +1   0  -1    -1  +1   0
-
-    MAX picks: best of [min(0,-1,+1), min(+1,0,-1), min(-1,+1,0)]
-             = best of [-1, -1, -1] = -1  (all equally bad!)
-
-    → In a zero-sum game with perfect knowledge, minimax gives EV=0
-      confirming the Nash Equilibrium result.
+```mermaid
+flowchart LR
+    z1["z_1\n(Cycling)"] -->|"A"| z2["z_2\n(Aggressive)"]
+    z2 -->|"A"| z3["z_3\n(Random)"]
+    z3 -->|"A"| z4["z_4\n(Cycling)"]
+    z1 -->|"B"| x1["x_1 = R"]
+    z2 -->|"B"| x2["x_2 = R"]
+    z3 -->|"B"| x3["x_3 = S"]
+    z4 -->|"B"| x4["x_4 = P"]
 ```
 
-**The twist:** Minimax is deterministic and thus exploitable. Randomized minimax (mixed strategies) resolves this.
+$A$ is the transition matrix over hidden states; $B$ is the emission matrix. Inference uses the **Viterbi algorithm** $O(K^2 T)$ for the most likely state sequence, and **Baum-Welch** (EM) to learn $A$ and $B$ from observed data.
 
 ---
 
-### 8 · Frequency Analysis & Transition Matrices
+## 6. Bayesian Inference
 
-The simplest exploitable AI: count moves, find the most frequent one, play its counter.
+Model the opponent's move distribution as a categorical with a Dirichlet prior:
 
-#### Live Frequency Tracker
+$$\theta \sim \text{Dir}(\alpha_R, \alpha_P, \alpha_S)$$
+$$x_t \mid \theta \sim \text{Categorical}(\theta)$$
 
-```
-    After 20 rounds:
-    Rock     ████████████░░░░  12/20 = 60%  ← exploit with Paper!
-    Paper    █████░░░░░░░░░░░   5/20 = 25%
-    Scissors ███░░░░░░░░░░░░░   3/20 = 15%
+The posterior after $n_R, n_P, n_S$ observed moves is:
 
-    First-Order Transition Matrix (empirical):
-          → R    → P    → S
-    R  [ 0.50   0.25   0.25 ]
-    P  [ 0.20   0.40   0.40 ]
-    S  [ 0.67   0.17   0.17 ]
+$$\theta \mid x_{1:T} \sim \text{Dir}(\alpha_R + n_R,\; \alpha_P + n_P,\; \alpha_S + n_S)$$
 
-    Observation: After Rock, opponent plays Rock again 50% of the time.
-    AI: When opponent just played Rock → play Paper.
+The posterior predictive is simply $\hat{p}_i = (\alpha_i + n_i) / (\sum_j \alpha_j + T)$. The AI plays the counter to $\arg\max_i \hat{p}_i$.
+
+```mermaid
+flowchart LR
+    prior["Prior\nDir(1,1,1)"] --> update["Posterior Update\n+ observed counts"]
+    obs["Observed moves\n[R,R,P,S,R]"] --> update
+    update --> post["Posterior\nDir(4,2,2)"]
+    post --> pred["p(R)=0.50\np(P)=0.25\np(S)=0.25"]
+    pred --> ai["AI plays Paper"]
 ```
 
 ---
 
-### 9 · Cognitive Biases & Human Psychology
+## 7. Thompson Sampling
 
-Humans are not random. Several well-documented cognitive biases create exploitable patterns in RPS:
+Maintain independent Beta posteriors over the win probability of each AI move $a$:
 
-#### The Gambler's Fallacy
+$$\theta_a \sim \text{Beta}(\alpha_a, \beta_a)$$
 
-```
-    Belief: "I've played Rock three times, I'm 'due' to play something else."
+At each round, sample $\tilde{\theta}_a \sim \text{Beta}(\alpha_a, \beta_a)$ for each action and play $a^* = \arg\max_a \tilde{\theta}_a$. After observing outcome $r \in \{0, 1\}$:
 
-    Reality: Each throw is independent. But humans ACT as if it isn't.
+$$\alpha_{a^*} \leftarrow \alpha_{a^*} + r, \quad \beta_{a^*} \leftarrow \beta_{a^*} + (1 - r)$$
 
-    Exploitation: After 3 consecutive same moves, bet they'll switch.
-                  → Track "streak length" as an AI feature.
-```
-
-#### Win-Stay, Lose-Shift (WSLS) Strategy
-
-```
-    Human behavioral tendency documented in psychology research:
-
-    After WIN  → tend to REPEAT the winning move
-    After LOSS → tend to CHANGE to a different move
-    After DRAW → tend to SHIFT (slight tendency)
-
-    WSLS Exploitation Table:
-    ┌──────────────────────────────────────────────────────┐
-    │ Prev Result │ Prev Human Move │ Predicted Next Move  │
-    ├─────────────┼─────────────────┼──────────────────────┤
-    │    WIN      │     Rock        │     Rock (again)     │
-    │    WIN      │     Paper       │     Paper (again)    │
-    │    WIN      │     Scissors    │     Scissors (again) │
-    │    LOSS     │     Rock        │     Paper or Scissors│
-    │    LOSS     │     Paper       │     Rock or Scissors │
-    └──────────────────────────────────────────────────────┘
-```
-
-#### Recency Bias
-
-```
-    Humans over-weight recent outcomes vs. historical patterns.
-    A player who just lost to Scissors will irrationally avoid Paper.
-
-    Modeled as: P(move | history) with exponential decay weights
-    w_t = λ^(T - t),  λ ∈ (0, 1)
-
-    More recent moves → higher weight in prediction.
-```
+Thompson Sampling is Bayes-optimal for the Bernoulli bandit and achieves $O(\sqrt{KT \log T})$ regret asymptotically.
 
 ---
 
-### 10 · Von Neumann's Minimax Theorem
+## 8. Nash Equilibrium
 
-> **The foundational theorem of game theory (1928)**
+A mixed strategy Nash Equilibrium is a profile $(\sigma^*, \tau^*)$ such that neither player gains by unilateral deviation:
 
-**Theorem:** In any finite, two-player, zero-sum game, there exists a mixed strategy for each player such that:
+$$\mathbb{E}[\text{payoff} \mid \sigma^*, \tau^*] \geq \mathbb{E}[\text{payoff} \mid \sigma, \tau^*] \quad \forall \sigma$$
 
-```
-    max_{x} min_{y} x^T A y  =  min_{y} max_{x} x^T A y  =  v
+For RPS the unique Nash Equilibrium is:
 
-    where:
-      A = payoff matrix
-      x = player 1's mixed strategy (probability vector)
-      y = player 2's mixed strategy (probability vector)
-      v = value of the game
-```
+$$\sigma^* = \tau^* = \left(\tfrac{1}{3}, \tfrac{1}{3}, \tfrac{1}{3}\right)$$
 
-**For RPS:**
-
-```
-    A = [  0  -1  +1 ]
-        [ +1   0  -1 ]
-        [ -1  +1   0 ]
-
-    Optimal: x* = y* = (1/3, 1/3, 1/3)
-    Value: v = 0
-
-    This means: no strategy can guarantee positive expected payoff
-    against an optimal opponent. The game is "fair" at equilibrium.
-```
-
-This theorem is the mathematical bedrock of AI decision-making under adversarial uncertainty, and directly motivates why pure deterministic AI in RPS is always beatable.
+with game value $v = 0$. Any deviation from $\sigma^*$ by one player is immediately exploitable by the other. This is the theoretical ceiling: an AI playing Nash cannot be beaten in expectation, but also cannot beat a Nash-playing human. Exploiting human bias requires deliberately deviating from Nash.
 
 ---
 
-### 11 · Law of Large Numbers & Central Limit Theorem
+## 9. Minimax Algorithm
 
-#### Law of Large Numbers
+In a two-player zero-sum game the minimax value is:
 
-```
-    The empirical win rate of any fixed strategy converges to its
-    true expected win rate as games → ∞
+$$v = \max_\sigma \min_\tau \; \sigma^\top A \tau$$
 
-    For Nash strategy (random 1/3 each):
-      Win rate → 1/3
-      Loss rate → 1/3
-      Draw rate → 1/3
-
-    Simulation (n=10,000 games):
-    ┌────────────────────────────────────────────────────────┐
-    │ n=10:    win%  ████████████████████████  55% (noisy)  │
-    │ n=100:   win%  ████████████████  38%     (converging) │
-    │ n=1000:  win%  █████████████  33.8%      (near true)  │
-    │ n=10000: win%  █████████████  33.3%      (converged)  │
-    └────────────────────────────────────────────────────────┘
-```
-
-#### Central Limit Theorem
-
-```
-    Win count W_n after n games:
-
-    (W_n / n - 1/3) · √n  →  N(0, σ²)  as n → ∞
-
-    σ² = (1/3)(1 - 1/3) = 2/9
-
-    95% confidence interval for win rate after 100 games:
-    1/3 ± 1.96 · √(2/9 / 100)  =  0.333 ± 0.093
+```mermaid
+graph TD
+    root["AI chooses (MAX)"]
+    root --> r["AI: Rock"]
+    root --> p["AI: Paper"]
+    root --> s["AI: Scissors"]
+    r --> rr["H:R -> 0"]
+    r --> rp["H:P -> -1"]
+    r --> rs["H:S -> +1"]
+    p --> pr["H:R -> +1"]
+    p --> pp["H:P -> 0"]
+    p --> ps["H:S -> -1"]
+    s --> sr["H:R -> -1"]
+    s --> sp["H:P -> +1"]
+    s --> ss["H:S -> 0"]
+    r --> minr["MIN = -1"]
+    p --> minp["MIN = -1"]
+    s --> mins["MIN = -1"]
+    minr --> maxv["MAX = -1  (all equal)"]
+    minp --> maxv
+    mins --> maxv
 ```
 
-**Teaching moment:** This tells us how many games we need to be *statistically confident* that an AI is genuinely skilled vs. just lucky.
+All branches have the same minimax value $-1$, confirming that no deterministic pure strategy dominates. The deterministic minimax reduces to Nash, and a randomized best response mixes uniformly.
 
 ---
 
-### 12 · Hidden Markov Models (HMM)
+## 10. Von Neumann Minimax Theorem
 
-An HMM models a system with **hidden states** (unobservable) that generate observable outputs. In RPS:
+**Theorem (Von Neumann, 1928).** For any finite two-player zero-sum game with payoff matrix $A \in \mathbb{R}^{m \times n}$:
 
-```
-    Hidden States: Player's "mood" or "strategy mode"
-                   e.g., {Aggressive, Defensive, Random, Cycling}
+$$\max_{x \in \Delta_m} \min_{y \in \Delta_n} x^\top A y \;=\; \min_{y \in \Delta_n} \max_{x \in \Delta_m} x^\top A y \;=\; v$$
 
-    Observable:    Actual move sequence [R, P, S, R, R, P, ...]
+where $\Delta_m, \Delta_n$ are the probability simplices over the players' action sets.
 
-    ┌──────────────────────────────────────────────────────────┐
-    │                                                          │
-    │  Hidden:  Aggressive ──→ Cycling ──→ Random             │
-    │               │              │          │                │
-    │               ▼              ▼          ▼                │
-    │  Observed:    R              P          S                │
-    │                                                          │
-    │  Goal: Infer hidden state → predict next observable      │
-    │  Algorithm: Viterbi (most likely state sequence)         │
-    │             Baum-Welch (EM for learning transitions)     │
-    └──────────────────────────────────────────────────────────┘
-```
-
-**Why HMMs beat simple Markov chains in RPS:** People don't follow a single strategy — they shift between strategies. HMMs model these *regime changes* explicitly.
+For RPS, $A$ is the $3 \times 3$ antisymmetric matrix above, and the unique saddle point is $x^* = y^* = (1/3, 1/3, 1/3)^\top$ with $v = 0$. The theorem guarantees existence of this saddle point for all finite zero-sum games and is the foundation for all adversarial AI.
 
 ---
 
-### 13 · Monte Carlo Methods
+## 11. Folk Theorem
 
-**Monte Carlo** methods estimate quantities through random sampling and simulation.
+In an infinitely repeated game with discount factor $\delta \in (0,1)$, each player's continuation value from round $t$ is $V_t = \sum_{k=0}^\infty \delta^k r_{t+k}$.
 
-#### Monte Carlo Win Rate Estimation
+**Folk Theorem (informal).** Any payoff vector $u$ that Pareto-dominates the minimax payoff $\bar{v}$ can be sustained as a subgame-perfect Nash Equilibrium when $\delta$ is sufficiently close to 1.
 
-```
-    Question: "What is my win rate if I always play Paper?"
-
-    Simulation:
-      1. Sample opponent's moves from empirical distribution
-      2. Play Paper every round
-      3. Count wins / total rounds
-
-    Repeat 10,000 times → stable estimate with confidence interval
-
-    Converges by the Strong Law of Large Numbers.
-```
-
-#### Monte Carlo Tree Search (MCTS) in RPS
-
-```
-    Phase 1: SELECTION
-      Start from root, traverse tree by UCB1 score
-
-    Phase 2: EXPANSION
-      Add new game state (move sequence)
-
-    Phase 3: SIMULATION
-      Random playout from this state
-
-    Phase 4: BACKPROPAGATION
-      Update win counts up the tree
-
-    ┌─────────────────────────────────────────────────────────┐
-    │  Root (current state)                                   │
-    │  ├── Play Rock  [W:5/V:8]  ← UCB: 0.62+bonus = 0.89   │
-    │  ├── Play Paper [W:3/V:4]  ← UCB: 0.75+bonus = 1.12 ✓ │
-    │  └── Play Scissors [W:1/V:2] ← UCB: 0.5+bonus = 1.43  │
-    └─────────────────────────────────────────────────────────┘
-    (Note: in 1-ply RPS, MCTS reduces to frequency analysis)
-```
+In RPS this means: when both players care about future rounds (high $\delta$), patterns across rounds act as a signaling channel. A player who deviates from an implicit pattern-based "agreement" can be punished in subsequent rounds. The LSTM exploits exactly this channel -- it detects the implicit structure a human player builds over many rounds.
 
 ---
 
-### 14 · Entropy & Information Theory
+## 12. Q-Learning
 
-**Entropy** measures uncertainty (or randomness) in a distribution.
+Q-Learning learns the action-value function $Q : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$ without a model of the environment.
 
-```
-    Shannon Entropy:  H(X) = -Σ p(x) log₂ p(x)
+$$Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \max_{a'} Q(s', a') - Q(s, a) \right]$$
 
-    Perfect random player:
-    H = -(1/3)log₂(1/3) × 3 = log₂(3) ≈ 1.585 bits  (maximum)
+In RPS: $s$ is the last $n$ moves, $\mathcal{A} = \{R, P, S\}$, $r \in \{+1, 0, -1\}$.
 
-    Biased player (R:0.6, P:0.3, S:0.1):
-    H = -(0.6·log₂0.6 + 0.3·log₂0.3 + 0.1·log₂0.1)
-      = -(−0.442 + −0.521 + −0.332)
-      ≈ 1.295 bits  (lower → more predictable → more exploitable)
-
-    ┌────────────────────────────────────────────────────────┐
-    │  Entropy as Exploitability Meter:                      │
-    │                                                        │
-    │  H = 1.585 ████████████████████  Max entropy (random) │
-    │  H = 1.295 ████████████████      Moderate bias        │
-    │  H = 0.918 ████████████          Heavy bias           │
-    │  H = 0.000 ▌                     Always plays Rock    │
-    │                                                        │
-    │  Lower entropy = easier to beat                        │
-    └────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    env["Environment\n(RPS game)"] -->|"state s\n(move history)"| agent["Agent\n(Q-table or DQN)"]
+    agent -->|"action a\n(AI move)"| env
+    env -->|"reward r\nnext state s'"| agent
+    agent --> update["Bellman Update\nQ(s,a) <- Q(s,a) + alpha[r + gamma max Q(s',a') - Q(s,a)]"]
 ```
 
-**Mutual Information** between consecutive moves `I(X_t; X_{t+1})` measures how much knowing one move tells you about the next — a direct measure of how well a Markov model will work.
+Deep Q-Networks (DQN) replace the table with a neural network $Q_\theta(s,a)$, enabling generalization over the exponentially large state space of long move histories.
 
 ---
 
-### 15 · Ensemble Methods
+## 13. Policy Gradient
 
-No single AI strategy dominates. **Ensemble methods** combine multiple weak learners.
+Policy gradient methods directly parameterize the policy $\pi_\theta(a \mid s)$ and optimize expected cumulative reward $J(\theta) = \mathbb{E}_{\pi_\theta}\left[\sum_t r_t\right]$.
 
-```
-    Ensemble Architecture for RPS AI:
+**REINFORCE gradient estimator:**
 
-    ┌──────────────────────────────────────────────────────────┐
-    │                   Ensemble AI                            │
-    │                                                          │
-    │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │
-    │  │  Markov  │  │  LSTM    │  │ Frequency│  │  WSLS  │  │
-    │  │  Chain   │  │ Network  │  │ Analysis │  │ Model  │  │
-    │  └─────┬────┘  └─────┬────┘  └─────┬────┘  └───┬────┘  │
-    │        │Paper        │Rock          │Paper       │Rock   │
-    │        └─────────────┴──────────────┴────────────┘       │
-    │                      │                                   │
-    │              ┌───────▼────────┐                          │
-    │              │ Voting / Blend │                          │
-    │              │  (weighted by  │                          │
-    │              │  recent perf.) │                          │
-    │              └───────┬────────┘                          │
-    │                      │ → Paper (majority)                │
-    └──────────────────────────────────────────────────────────┘
+$$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\left[\sum_t \nabla_\theta \log \pi_\theta(a_t \mid s_t) \cdot G_t\right]$$
+
+where $G_t = \sum_{k \geq t} \gamma^{k-t} r_k$ is the return from step $t$.
+
+```mermaid
+flowchart LR
+    policy["pi_theta(a|s)\n(neural network)"] -->|"sample action a"| game["RPS Round"]
+    game -->|"reward r"| buffer["Episode Buffer\n(s_t, a_t, G_t)"]
+    buffer --> grad["Compute gradient\nnabla J(theta)"]
+    grad -->|"theta <- theta + alpha * grad"| policy
 ```
 
-**Meta-learning angle:** Each sub-model votes, weighted by its recent accuracy. The ensemble adapts which model to trust based on which is currently best at predicting this particular opponent.
+A baseline $b(s)$ (e.g., value function $V(s)$) reduces gradient variance: replace $G_t$ with $G_t - b(s_t)$, yielding the **Actor-Critic** family.
 
 ---
 
-### 16 · Thompson Sampling
+## 14. Multi-Armed Bandits
 
-**Thompson Sampling** is a Bayesian approach to the exploration-exploitation problem. Maintain a Beta distribution for each action's win probability; sample from each and pick the action whose sample is highest.
+The bandit formulation treats each move as an arm with unknown win-rate distribution. UCB1 balances exploration and exploitation:
 
-```
-    For each move a ∈ {Rock, Paper, Scissors}:
-      α_a = wins with move a + 1
-      β_a = losses with move a + 1
+$$a_t = \arg\max_{a \in \mathcal{A}} \left[ \hat{\mu}_a + C \sqrt{\frac{\ln t}{n_a}} \right]$$
 
-    θ_a ~ Beta(α_a, β_a)  ← sample
+where $\hat{\mu}_a$ is the empirical win rate of move $a$, $n_a$ is the number of times it was played, $t$ is the total round count, and $C$ is an exploration constant. UCB1 achieves $O(\sqrt{KT \log T})$ cumulative regret.
 
-    Play move with highest θ_a
-
-    ┌──────────────────────────────────────────────────────────┐
-    │  After 20 games:                                         │
-    │                                                          │
-    │  Rock:     Beta(8, 4)   sample → 0.65                   │
-    │  Paper:    Beta(3, 9)   sample → 0.22                   │
-    │  Scissors: Beta(5, 7)   sample → 0.41                   │
-    │                                                          │
-    │  → Play Rock (highest sample)                            │
-    │                                                          │
-    │  As n → ∞: samples concentrate near true win rate       │
-    │  → Asymptotically optimal exploration                    │
-    └──────────────────────────────────────────────────────────┘
-```
+Bandits ignore temporal structure and thus underperform Markov and LSTM models when the opponent has sequential patterns. They are optimal only when rounds are i.i.d.
 
 ---
 
-### 17 · Transformer & Attention Mechanisms
+## 15. Frequency Analysis
 
-Modern deep learning uses **attention** to weight the importance of each past move when making predictions — instead of LSTM's sequential bottleneck.
+The simplest viable AI: estimate the opponent's marginal move distribution and play the counter to the mode.
 
-#### Self-Attention on Move History
+$$\hat{p}_i = \frac{n_i}{T}, \quad a^* = \text{counter}\!\left(\arg\max_i \hat{p}_i\right)$$
 
-```
-    Move sequence: [R, P, R, R, S, P, R, P, S, ?]
-    Position:       1  2  3  4  5  6  7  8  9  10
-
-    Attention weights for predicting position 10:
-    (which past moves matter most?)
-
-    Pos 1 (R): 0.03  ░
-    Pos 2 (P): 0.05  ░░
-    Pos 3 (R): 0.04  ░
-    Pos 4 (R): 0.15  ████
-    Pos 5 (S): 0.08  ██
-    Pos 6 (P): 0.12  ███
-    Pos 7 (R): 0.25  ████████    ← most recent Rock is informative
-    Pos 8 (P): 0.18  █████
-    Pos 9 (S): 0.10  ███
-
-    Weighted sum → context vector → predict next move
-```
-
-**Equation:**
-
-```
-    Attention(Q, K, V) = softmax(QKᵀ / √d_k) · V
-
-    Q = query (position 10)
-    K = keys  (all past positions)
-    V = values (move embeddings)
-    d_k = key dimension (scaling factor)
-```
+A first-order extension builds the empirical transition matrix $\hat{T}_{ij}$ and plays $\text{counter}(\arg\max_j \hat{T}_{x_{t-1}, j})$. This is a maximum-likelihood Markov predictor with $n=1$.
 
 ---
 
-### 18 · Folk Theorem (Repeated Games)
+## 16. Entropy and Information Theory
 
-The **Folk Theorem** from game theory states: in a **repeated game** with sufficient discount factor, any payoff vector that Pareto-dominates the minimax payoff can be sustained as a Nash Equilibrium.
+Shannon entropy of the opponent's move distribution measures exploitability:
 
-#### Implication for RPS
+$$H(X) = -\sum_{i \in \{R,P,S\}} p_i \log_2 p_i$$
 
-```
-    In a one-shot game:
-      Only Nash strategy: (1/3, 1/3, 1/3)
+The maximum $H = \log_2 3 \approx 1.585$ bits is achieved by the Nash strategy $(1/3, 1/3, 1/3)$ -- zero exploitability. Any deviation from uniform lowers $H$ and creates exploitable structure.
 
-    In a repeated game (infinite horizon, δ close to 1):
-      Cooperative strategies become sustainable:
-      - "I'll play predictably if you do too"
-      - Tit-for-Tat adaptations
-      - Punishment/reward signaling across rounds
+Mutual information between consecutive moves quantifies how much the current move predicts the next:
 
-    ┌──────────────────────────────────────────────────────────┐
-    │  Folk Theorem in practice:                               │
-    │                                                          │
-    │  If both players care about future rounds:               │
-    │    → History of play becomes a "communication channel"   │
-    │    → Patterns can be used to signal strategies           │
-    │    → Deviation from implicit "agreement" is punished     │
-    │                                                          │
-    │  Discount factor δ = (probability game continues next    │
-    │                       round) or time preference          │
-    └──────────────────────────────────────────────────────────┘
-```
+$$I(X_t;\, X_{t+1}) = H(X_{t+1}) - H(X_{t+1} \mid X_t)$$
+
+High $I$ means a Markov predictor will perform well; low $I$ (near-random play) means sequence models add little over frequency analysis.
 
 ---
 
-### 19 · GRU (Gated Recurrent Unit)
+## 17. Law of Large Numbers and CLT
 
-The **GRU** is a simplified version of the LSTM with two gates instead of three, making it faster to train while retaining most of the sequence modeling power.
+**Strong LLN.** Let $W_n$ be the number of wins in $n$ rounds under the Nash strategy. Then:
 
-#### GRU vs LSTM Comparison
+$$\frac{W_n}{n} \xrightarrow{a.s.} \frac{1}{3} \quad \text{as } n \to \infty$$
 
-```
-    LSTM:                           GRU:
-    ┌─────────────────────┐         ┌─────────────────────┐
-    │  Forget Gate  (f_t) │         │  Reset Gate   (r_t) │
-    │  Input Gate   (i_t) │   vs    │  Update Gate  (z_t) │
-    │  Output Gate  (o_t) │         │  (no output gate)   │
-    │  Cell State   (C_t) │         │  (no separate cell) │
-    │  Hidden State (h_t) │         │  Hidden State (h_t) │
-    └─────────────────────┘         └─────────────────────┘
+**CLT.** The standardized win rate converges in distribution:
 
-    GRU Equations:
-    z_t = σ(W_z · [h_{t-1}, x_t])         ← Update gate
-    r_t = σ(W_r · [h_{t-1}, x_t])         ← Reset gate
-    h̃_t = tanh(W · [r_t ⊙ h_{t-1}, x_t]) ← Candidate
-    h_t = (1 - z_t) ⊙ h_{t-1} + z_t ⊙ h̃_t ← New hidden state
-```
+$$\frac{W_n/n - 1/3}{\sqrt{2/(9n)}} \xrightarrow{d} \mathcal{N}(0, 1)$$
 
-**In RPS:** GRU trains ~33% faster than LSTM with similar prediction accuracy on short sequences (≤20 moves), making it practical for real-time in-browser use.
+A 95% confidence interval for the true win rate after $n$ rounds is:
+
+$$\hat{p} \pm 1.96 \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
+
+This is the principled way to determine whether an AI's edge over a human is statistically significant rather than due to sampling variance.
 
 ---
 
-### 20 · Policy Gradient Methods
+## 18. Monte Carlo Methods
 
-**Policy gradient** methods directly optimize the probability of actions that led to positive outcomes — no value function needed.
+Monte Carlo win-rate estimation: sample $M$ episodes from the empirical opponent model, simulate outcomes, and compute:
 
-#### REINFORCE in RPS
+$$\hat{v}(a) = \frac{1}{M} \sum_{m=1}^M r_m^{(a)}, \quad \text{Var}(\hat{v}) = O(1/M)$$
 
-```
-    Policy: π_θ(a | s) = P(AI plays a | history s; params θ)
-            (parameterized by a neural network)
+**Monte Carlo Tree Search** in RPS reduces to a one-ply search (the game has no future branching once the current move is chosen), making MCTS equivalent to frequency analysis at depth 1. At depth $d > 1$ (iterated or tournament play), MCTS selects nodes by UCB:
 
-    Objective: J(θ) = E[Σ r_t]  (expected cumulative reward)
-
-    Gradient: ∇_θ J(θ) = E[Σ ∇_θ log π_θ(a_t|s_t) · G_t]
-              where G_t = cumulative future reward from step t
-
-    Update:  θ ← θ + α · ∇_θ J(θ)
-
-    ┌──────────────────────────────────────────────────────────┐
-    │  Intuition: "Reinforce" winning moves                    │
-    │                                                          │
-    │  Played Paper → Won (+1)  → Increase P(Paper | state)   │
-    │  Played Rock  → Lost (-1) → Decrease P(Rock | state)    │
-    │  Played Paper → Draw (0)  → Small decrease (baseline)   │
-    └──────────────────────────────────────────────────────────┘
-```
+$$\text{UCB}(v) = \frac{w_v}{n_v} + C \sqrt{\frac{\ln n_{\text{parent}}}{n_v}}$$
 
 ---
 
-## 🏗️ Current Implementation
+## 19. Ensemble Methods
 
-### System Architecture
+An ensemble AI combines $K$ base predictors, each trained on a different model class, with weights $\lambda_k$ tuned by recent accuracy:
 
-```
-    ┌─────────────────────────────────────────────────────────────┐
-    │                     Browser (Client)                        │
-    │                                                             │
-    │  ┌─────────────┐    ┌──────────────┐    ┌──────────────┐   │
-    │  │  index.html  │    │   styles.css  │    │   main.js    │   │
-    │  │  (Structure) │    │  (Animations) │    │  (Logic +    │   │
-    │  └─────────────┘    └──────────────┘    │   LSTM AI)   │   │
-    │                                          └──────┬───────┘   │
-    │                                                 │           │
-    │  ┌──────────────────────────────────────────────▼─────────┐ │
-    │  │                  External Libraries                     │ │
-    │  │  ┌──────────────┐           ┌──────────────────────┐   │ │
-    │  │  │  Brain.js    │           │     Vis.js Network   │   │ │
-    │  │  │  (LSTM impl) │           │  (NN Visualization)  │   │ │
-    │  │  └──────────────┘           └──────────────────────┘   │ │
-    │  └─────────────────────────────────────────────────────────┘ │
-    └─────────────────────────────────────────────────────────────┘
+$$\hat{y} = \text{counter}\!\left(\arg\max_i \sum_{k=1}^K \lambda_k \hat{p}_k(i)\right)$$
+
+```mermaid
+flowchart LR
+    h["Move history"] --> m1["Markov\nPredictor"]
+    h --> m2["LSTM"]
+    h --> m3["Frequency\nAnalysis"]
+    h --> m4["WSLS\nModel"]
+    m1 -->|"p1(a)"| vote["Weighted Vote\nsum lambda_k * p_k(a)"]
+    m2 -->|"p2(a)"| vote
+    m3 -->|"p3(a)"| vote
+    m4 -->|"p4(a)"| vote
+    vote --> counter["counter(argmax)"]
+    counter --> ai["AI Move"]
+    ai -->|"update lambda_k\nby recent accuracy"| vote
 ```
 
-### AI Decision Pipeline
-
-```
-    User Clicks Play
-          │
-          ▼
-    ┌─────────────────┐
-    │  Get User Move  │  (from UI state)
-    └────────┬────────┘
-             │
-             ▼
-    ┌─────────────────────────────────┐
-    │  Pattern Buffer (last 10 moves) │
-    │  [1, 2, 3, 1, 1, 2, 3, 2, 1, ?]│
-    └────────┬────────────────────────┘
-             │
-             ▼
-    ┌──────────────────────────────────────┐
-    │  LSTMTimeStep.train([pattern],        │
-    │      { iterations: 200 })            │
-    └────────┬─────────────────────────────┘
-             │
-             ▼
-    ┌────────────────────────────┐
-    │  net.run(pattern)          │
-    │  → predicted move (1-3)    │
-    └────────┬───────────────────┘
-             │
-             ▼
-    ┌──────────────────────────────────────┐
-    │  Counter-move lookup:                │
-    │  predicted=Rock(1)     → play Paper  │
-    │  predicted=Paper(2)    → play Scissors│
-    │  predicted=Scissors(3) → play Rock   │
-    └────────┬─────────────────────────────┘
-             │
-             ▼
-    ┌────────────────────────┐
-    │  Resolve & Score Round │
-    └────────────────────────┘
-```
+Weights $\lambda_k$ update by exponential moving average of each model's recent prediction accuracy, implementing a form of online meta-learning.
 
 ---
 
-## 📦 Installation & Running
+## 20. Cognitive Biases
 
-### Prerequisites
-- Python 3.x (for local HTTP server)
-- Modern web browser (Chrome 88+, Firefox 85+, Safari 14+)
+Human move sequences are not i.i.d. uniform. Several biases create exploitable structure:
 
-### Setup
+**Win-Stay Lose-Shift (WSLS).** Empirically documented tendency:
+
+$$P(\text{repeat} \mid \text{win}) > 1/3, \quad P(\text{switch} \mid \text{loss}) > 2/3$$
+
+**Gambler's Fallacy.** After $k$ consecutive identical moves, $P(\text{switch})$ increases with $k$ even though the correct probability is unchanged. Formally, humans act as if moves are draws without replacement.
+
+**Recency Bias.** Humans over-weight recent history. An exponential decay model captures this:
+
+$$\hat{p}_t(i) \propto \sum_{\tau=1}^{T} \lambda^{T-\tau} \mathbf{1}[x_\tau = i], \quad \lambda \in (0, 1)$$
+
+**Entropy implication.** Each bias lowers $H(X_t \mid \text{context})$ below $\log_2 3$, increasing the mutual information exploitable by a sequence model.
+
+---
+
+## Implementation
+
+```mermaid
+flowchart TD
+    click["User clicks Play"] --> buf["Pattern buffer\nlast 10 moves"]
+    buf --> train["LSTMTimeStep.train\niterations=200"]
+    train --> run["net.run(pattern)\n-> predicted move"]
+    run --> counter["Counter-move lookup"]
+    counter --> resolve["Resolve round\nupdate score + history"]
+    resolve --> buf
+```
+
+**Files**
+
+| File | Role |
+|------|------|
+| `index.html` | UI structure |
+| `main.js` | Game logic, LSTM AI, network visualization |
+| `styles.css` | Themes, animations |
+
+**Running locally**
 
 ```bash
 git clone https://github.com/a12n4v/rps.git
 cd rps
 python3 -m http.server 8000
-# → Open http://localhost:8000
+# open http://localhost:8000
 ```
 
 ---
 
-## 🎮 How to Play
+## Further Reading
 
-```
-    ┌────────────────────────────────────────────────────────────┐
-    │  1. CLICK your hand (left side) to cycle: ✊ → ✋ → ✌️   │
-    │  2. CLICK "Play" to submit your move                       │
-    │  3. WATCH the AI reveal its counter-move                   │
-    │  4. TRACK your score (+ win, − loss, = draw)               │
-    │  5. CLICK 🧠 to see the live LSTM network diagram          │
-    │  6. CLICK 🌙/☀️ to toggle dark/light mode                 │
-    └────────────────────────────────────────────────────────────┘
-```
+- Von Neumann and Morgenstern -- *Theory of Games and Economic Behavior* (1944)
+- Hochreiter and Schmidhuber -- *Long Short-Term Memory*, Neural Computation (1997)
+- Sutton and Barto -- *Reinforcement Learning: An Introduction* (2nd ed., 2018)
+- Shannon -- *A Mathematical Theory of Communication*, Bell System Technical Journal (1948)
+- Aumann -- *Repeated Games*, Nobel Lecture (2005)
 
 ---
 
-## 🗂️ Project Structure
-
-```
-rps/
-├── index.html        ← Game UI and layout
-├── main.js           ← Game logic, LSTM AI, visualization
-├── styles.css        ← Themes, animations, responsive layout
-├── tablecloth.jpg    ← Background texture (optional)
-├── game.png          ← Screenshot
-└── README.md         ← This document
-```
-
----
-
-## 🔬 Educational Use Cases
-
-| Audience | What to Demonstrate |
-|----------|-------------------|
-| ML Students | LSTM architecture, sequence prediction, training loops |
-| Game Theory Students | Nash equilibrium, zero-sum games, minimax theorem |
-| Statistics Students | LLN, CLT, Bayesian updating |
-| Psychology Students | Cognitive biases, WSLS behavior, gambler's fallacy |
-| CS Students | State machines, decision trees, search algorithms |
-| General Public | Why "random" is optimal — and why humans can't be |
-
----
-
-## 🚀 Potential Extensions
-
-- [ ] **Markov Chain AI** — switchable opponent strategy
-- [ ] **Bayesian opponent** — live Dirichlet belief visualization
-- [ ] **RL agent** — Q-table displayed as heat map
-- [ ] **Entropy meter** — show exploitability score in real time
-- [ ] **Ensemble AI** — weighted vote across 4+ strategies
-- [ ] **Multi-player mode** — model Folk Theorem dynamics
-- [ ] **GRU comparison** — benchmark LSTM vs GRU accuracy live
-- [ ] **Cognitive bias detector** — identify if you exhibit WSLS, gambler's fallacy, etc.
-
----
-
-## 📚 Further Reading
-
-- Von Neumann & Morgenstern — *Theory of Games and Economic Behavior* (1944)
-- Hochreiter & Schmidhuber — *Long Short-Term Memory* (1997)
-- Sutton & Barto — *Reinforcement Learning: An Introduction*
-- Shannon — *A Mathematical Theory of Communication* (1948)
-- Aumann — *Repeated Games* (Nobel Lecture, 2005)
-
----
-
-## 📝 License
-
-MIT — free to use, modify, and distribute.
-
----
-
-<div align="center">
-
-```
-         ✊  ✋  ✌️
-    Three moves.
-    One game.
-    Every idea in AI.
-```
-
-**Built to show that the simplest systems reveal the deepest principles.**
-
-</div>
+MIT License

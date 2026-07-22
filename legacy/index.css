@@ -1,0 +1,45 @@
+body {
+	display: grid;
+	justify-content: center;
+	color: white;
+	background: rgb(0 ,0 ,0);
+	font-family: 'Courier New', Courier, monospace;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	text-align: center;
+	height: 100%;
+	width: 100%;
+	margin: 0 auto;
+	position: fixed;
+}
+
+#display{
+	display: flex;
+	padding: 10vmin;
+}
+
+#usr-choice, #ai-choice {
+    font-size: 30vmin;
+}
+
+#ai-choice  {
+	transform: rotate(270deg);
+	margin-left: 5vmin;
+	color: rgb(255, 73, 73);
+}
+
+#usr-choice {
+	transform: rotate(90deg);
+}
+
+#usr-controls button {
+	height: 7.5vmin;
+	width: 7.5vmin;
+	border-radius: 7.5vmin;
+	font-size: 5vmin;
+    align-items: center;
+}
+#usr-controls button i {
+	z-index: -1;
+}

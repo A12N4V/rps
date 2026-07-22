@@ -451,34 +451,71 @@ $$\hat{p}_t(i) \propto \sum_{\tau=1}^{T} \lambda^{T-\tau} \mathbf{1}[x_\tau = i]
 
 ---
 
-## Implementation
+## Architecture
 
 ```mermaid
 flowchart TD
-    click["User clicks Play"] --> buf["Pattern buffer\nlast 10 moves"]
-    buf --> train["LSTMTimeStep.train\niterations=200"]
-    train --> run["net.run(pattern)\n-> predicted move"]
-    run --> counter["Counter-move lookup"]
-    counter --> resolve["Resolve round\nupdate score + history"]
-    resolve --> buf
+    browser["Browser"] --> router["React Router"]
+    router --> obs["Observatory /"]
+    router --> mod["/module/:slug"]
+    obs --> gb["GameBoard\n(Zustand store)"]
+    obs --> grid["Module Grid\n(20 cards)"]
+    mod --> ml["ModuleLayout\nTheory / Viz / Demo / Code"]
+    gb --> reg["moduleRegistry\ngetMove(history, pattern)"]
+    reg --> lstm["LSTM\n(Brain.js CDN)"]
+    reg --> markov["Markov\n(transition matrix)"]
+    reg --> freq["Frequency\n(empirical mode)"]
+    reg --> nash["Nash\n(uniform random)"]
+    reg --> bayes["Bayesian\n(Dirichlet posterior)"]
 ```
 
-**Files**
+**Source layout**
 
-| File | Role |
+| Path | Role |
 |------|------|
-| `index.html` | UI structure |
-| `main.js` | Game logic, LSTM AI, network visualization |
-| `styles.css` | Themes, animations |
+| `src/modules/registry.ts` | Module definitions and getMove dispatch |
+| `src/store/gameStore.ts` | Zustand: rounds, score, active module |
+| `src/components/game/` | GameBoard, MoveSelector, RoundHistory |
+| `src/components/module/` | ModuleCard, ModuleLayout (4-tab) |
+| `src/components/viz/` | NetworkGraph (vis-network), MatrixHeatmap (D3) |
+| `src/components/math/` | Equation (KaTeX) |
+| `src/modules/[slug]/` | Per-module AI logic + React page |
 
-**Running locally**
+## Installation
+
+**Requirements:** Node.js 18+
 
 ```bash
 git clone https://github.com/a12n4v/rps.git
 cd rps
-python3 -m http.server 8000
-# open http://localhost:8000
+npm install
+npm run dev
+# open http://localhost:5173
 ```
+
+Production build:
+
+```bash
+npm run build
+npm run preview
+```
+
+**Dependencies installed by npm install**
+
+| Package | Purpose |
+|---------|---------|
+| react, react-dom | UI framework |
+| react-router-dom | Client-side routing |
+| zustand | Game state store |
+| @radix-ui/react-tabs, @radix-ui/react-slider, @radix-ui/react-select, @radix-ui/react-tooltip | Accessible UI primitives |
+| katex | LaTeX math rendering |
+| d3 | Transition matrix heatmaps |
+| recharts | Win-rate charts |
+| vis-network | LSTM architecture graph |
+| tailwindcss, postcss, autoprefixer | Utility CSS |
+| vite, typescript | Build toolchain |
+
+Brain.js is loaded from unpkg CDN at runtime (no npm install needed) to avoid Node.js core-module conflicts with the Vite bundler.
 
 ---
 
